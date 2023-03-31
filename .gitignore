@@ -1,0 +1,7 @@
+/target
+kernel.bin
+mbr.bin
+vbr.bin
+test.bin
+test.img
+os.img

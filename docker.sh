@@ -1,6 +1,6 @@
 build() {
 	sudo docker build -t kernel .
-	docker cp kernel:/kernel_make/build ./build
+	sudo docker cp kernel:/kernel_make/build ./build
 }
 run() {
 	qemu-system-x86_64 -drive format=raw,media=disk,file=build/os.img -serial stdio -no-reboot -no-shutdown

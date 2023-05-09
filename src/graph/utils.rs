@@ -46,48 +46,62 @@ pub enum ColorCode {
 //     }
 // }
 
-pub fn u8_to_ColorCode(num: u8) -> ColorCode {
-    qemu_print_num(num as u64);
-    qemu_print_nln();
-    match num {
-        0x0 => ColorCode::Black,
-        0x1 => ColorCode::Blue,
-        0x2 => ColorCode::Green,
-        0x3 => ColorCode::Cyan,
-        0x4 => ColorCode::Red,
-        0x5 => ColorCode::Magenta,
-        0x6 => ColorCode::Brown,
-        0x7 => ColorCode::White,
-        0x8 => ColorCode::Gray,
-        0x9 => ColorCode::BrightBlue,
-        0xa => ColorCode::BrightGreen,
-        0xb => ColorCode::BrightCyan,
-        0xc => ColorCode::BrightRed,
-        0xd => ColorCode::BrightMagenta,
-        0xe => ColorCode::Yellow,
-        0xf => ColorCode::BrightWhite,
-        // TODO: Fix with panic
-        _ => {
-            qemu_print("Wrong Color: ");
-            qemu_print_num(num as u64);
-            qemu_print_nln();
-            ColorCode::BrightWhite
+impl ColorCode {
+    fn from_u8(num: u8) -> ColorCode {
+        qemu_print_num(num as u64);
+        qemu_print_nln();
+        match num {
+            0x0 => ColorCode::Black,
+            0x1 => ColorCode::Blue,
+            0x2 => ColorCode::Green,
+            0x3 => ColorCode::Cyan,
+            0x4 => ColorCode::Red,
+            0x5 => ColorCode::Magenta,
+            0x6 => ColorCode::Brown,
+            0x7 => ColorCode::White,
+            0x8 => ColorCode::Gray,
+            0x9 => ColorCode::BrightBlue,
+            0xa => ColorCode::BrightGreen,
+            0xb => ColorCode::BrightCyan,
+            0xc => ColorCode::BrightRed,
+            0xd => ColorCode::BrightMagenta,
+            0xe => ColorCode::Yellow,
+            0xf => ColorCode::BrightWhite,
+            // TODO: Fix with panic
+            _ => {
+                qemu_print("Wrong Color: ");
+                qemu_print_num(num as u64);
+                qemu_print_nln();
+                ColorCode::BrightWhite
+            }
         }
     }
 }
 
 // // TODO: Make it independent of constant size, kalloc
-pub fn u8_buf_to_ColorCode(p: *mut u8) -> *mut ColorCode {
+pub fn u8_buf_to_ColorCode(p: *mut u8) -> [ColorCode; 256] {
     let mut buf: [ColorCode; 256] = [ColorCode::Black; 256];
     let (_width, _height) = (16, 16);
 
     for y in 0.._height {
         for x in 0.._width {
-            buf[_height * y + x] = u8_to_ColorCode(unsafe { *p.offset((_height * y + x) as isize) });
+            qemu_print("xy: ");
+            qemu_print_num((_height * y + x) as u64);
+            qemu_print_nln();
+
+            buf[_height * y + x] = ColorCode::from_u8(unsafe { *p.offset((_height * y + x) as isize) });
         }
     }
 
-    buf.as_mut_ptr()
+    qemu_println("Testing colors:");
+    qemu_print_num(buf[0] as u64);
+    qemu_print_nln();
+    qemu_print_num(buf[1] as u64);
+    qemu_print_nln();
+    qemu_print_num(buf[255] as u64);
+    qemu_print_nln();
+
+    buf
 }
 
 //This is the default VGA color palette

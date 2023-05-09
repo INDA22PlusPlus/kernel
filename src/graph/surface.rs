@@ -3,7 +3,6 @@ use core::ptr::null_mut;
 use super::font_data::{self, FontData};
 use super::utils::ColorCode;
 use crate::graph::utils;
-use crate::graph::utils::u8_to_ColorCode;
 use crate::math::vec2::{self, Vec2};
 use crate::mem::alloc;
 use crate::tooling::qemu_io::*;

@@ -45,6 +45,7 @@ use crate::graph::utils::u8_buf_to_ColorCode;
 
 use crate::handlers::*;
 use crate::math::vec2;
+use crate::utils::qemu_io::qemu_print_nln;
 
 #[no_mangle]
 #[link_section = ".start"]
@@ -148,6 +149,7 @@ pub fn test_graphics_lib() {
     // let mut sprite = Surface::from_blank(16, 16);
 
     let mut buf_u8:[u8; 256] = [
+         1, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15,
         15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15,
         15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15,
         15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15,
@@ -162,14 +164,22 @@ pub fn test_graphics_lib() {
         15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15,
         15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15,
         15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15,
-        15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15,
-        15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15,
+        15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15,  4,
     ];
 
-    let mut buf = u8_buf_to_ColorCode(buf_u8[0] as *mut u8);
+    let mut buf = u8_buf_to_ColorCode(buf_u8.as_mut_ptr());
 
-    let mut sprite = Surface::from_buffer(buf, 16, 16,
-                                          Some(ColorCode::BrightWhite));
+    let mut buf_2 = [ColorCode::BrightRed; 256];
+
+    qemu_println("test pointer access:");
+    // qemu_print_num(unsafe { *buf.offset(255) } as u64);
+    // qemu_print_num( buf_2[255] as u64);
+    qemu_print_nln();
+
+    // let mut sprite = Surface::from_buffer(buf_2.as_mut_ptr(), 16, 16,
+    //                                       Some(ColorCode::BrightWhite));
+    let mut sprite = Surface::from_buffer(buf.as_mut_ptr(), 16, 16,
+                                          Some(ColorCode::BrightRed));
     sprite.set_origin(Vec2::<usize>::new(100, 100));
     // sprite.buffer;
 

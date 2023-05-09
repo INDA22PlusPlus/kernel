@@ -154,7 +154,7 @@ pub fn test_graphics_lib() {
     let size = Vec2::<usize>::new(16, 16);
     let mut scale: usize = 2;
 
-    let mut buf_u8: [u8; 256] = gamedev::temp_sprites::get_ovve_outline();
+    let mut buf_u8: [u8; 256] = gamedev::binnary_sprites::get_ovve_outline();
     // let mut buf = u8_buf_to_ColorCode(buf_u8.as_mut_ptr(), &size, scale);
 
     ///

@@ -81,7 +81,7 @@ impl ColorCode {
 }
 
 // // TODO: Make it independent of constant size, kalloc
-pub fn u8_buf_to_ColorCode(p: *mut u8, size: &Vec2<usize>, scale: usize) -> *mut ColorCode {
+pub fn u8_buf_to_ColorCode(p: *mut u8, size: Vec2<usize>, scale: usize) -> *mut ColorCode {
     let mut buf_ptr = kalloc((size.x * scale) * (size.y * scale)) as *mut ColorCode;
     // let mut buf: [ColorCode; 256] = [ColorCode::Black; 256];
     // let (width, height) = (size.x * scale, size.y * scale);

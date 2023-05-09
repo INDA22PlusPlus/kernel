@@ -37,6 +37,7 @@ use tooling::qemu_io::{
     qemu_fmt_println, qemu_print, qemu_print_hex, qemu_print_num, qemu_println,
 };
 use tooling::vga::write_str_at;
+use crate::gamedev::binnary_sprites::get_ovve_outline;
 use crate::gamedev::temp_sprites::get_sprite_ovve_outline;
 
 use crate::graph::font_data;
@@ -153,12 +154,51 @@ pub fn test_graphics_lib() {
     // let mut sprite = Surface::from_blank(16, 16);
 
     let size = Vec2::<usize>::new(16, 16);
-    let mut scale: usize = 2;
+    let start = Vec2::<usize>::new(100, 100);
+    // let scale: usize = 2;
+    let ignore_color = ColorCode::BrightWhite;
+    let buf_u8 = get_ovve_outline();
 
-    let sprite_1x = get_sprite_ovve_outline(size, 1);
-    let sprite_2x = get_sprite_ovve_outline(size, 2);
-    let sprite_3x = get_sprite_ovve_outline(size, 3);
-    let sprite_4x = get_sprite_ovve_outline(size, 4);
+    let sprite_1x = get_sprite_ovve_outline(
+        buf_u8,
+        size,
+        start,
+        1,
+        ignore_color
+    );
+
+    // let sprite_4x = get_sprite_ovve_outline(
+    //     buf_u8,
+    //     size,
+    //     Vec2::<usize>::new(200, 100),
+    //     4,
+    //     ignore_color
+    // );
+
+    let sprite_2x = get_sprite_ovve_outline(
+        buf_u8,
+        size,
+        Vec2::<usize>::new(120, 100),
+        2,
+        ignore_color
+    );
+
+
+    let sprite_3x = get_sprite_ovve_outline(
+        buf_u8,
+        size,
+        start + Vec2::<usize>::new(55, 0),
+        3,
+        ignore_color
+    );
+
+    let sprite_4x = get_sprite_ovve_outline(
+        buf_u8,
+        size,
+        Vec2::<usize>::new(200, 100),
+        4,
+        ignore_color
+    );
 
     let mut counter = 0;
     loop {

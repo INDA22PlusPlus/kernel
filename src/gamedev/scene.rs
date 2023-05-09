@@ -1,4 +1,4 @@
-enum Scene {
+pub enum Scene {
     D1(WalkingArea),                // Most likely not going to be used
     Outside(Outside),
     Meta(Meta),
@@ -6,25 +6,25 @@ enum Scene {
     Test(WalkingArea)               // Debug scene
 }
 
-enum Outside {
+pub enum Outside {
     BorgGarden(WalkingArea),
     OsquarsBacke(FightingArea),
     MetaRamp(WalkingArea),
     MetaOutisde(GymArea)            // May be combined with meta ramp
 }
 
-enum Meta {
+pub enum Meta {
     MainArea(WalkingArea),
     CounterArea(FightingArea)
 }
 
-struct WalkingArea {}
+pub struct WalkingArea {}
 
-struct FightingArea {}
+pub struct FightingArea {}
 
-struct GymArea {}
+pub struct GymArea {}
 
-// enum Area {
+// pub enum Area {
 //     WalkingArea,
 //     FightingArea,
 //     GymArea

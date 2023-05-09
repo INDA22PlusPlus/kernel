@@ -1,4 +1,4 @@
-enum State {
+pub enum State {
     Walking,
     Fighting,
     CutScene,
@@ -10,7 +10,7 @@ enum State {
     Test,                   // Debug states
 }
 
-enum MenuOptions {
+pub enum MenuOptions {
     MainMenu,
     Settings(Settings),
     Save(Save),
@@ -18,8 +18,8 @@ enum MenuOptions {
 
 }
 
-struct Settings {}
+pub struct Settings {}
 
-struct Save {}
+pub struct Save {}
 
-struct Load {}
+pub struct Load {}

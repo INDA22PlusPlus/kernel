@@ -4,3 +4,5 @@ pub(crate) mod temp_sprites;
 mod state;
 mod scene;
 mod player;
+mod camera;
+mod sprite;

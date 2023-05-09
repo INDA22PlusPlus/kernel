@@ -10,3 +10,5 @@ mod tilemap;
 mod entity;
 mod dialogue;
 mod path;
+mod inventory;
+mod team;

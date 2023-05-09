@@ -37,7 +37,7 @@ use tooling::qemu_io::{
     qemu_fmt_println, qemu_print, qemu_print_hex, qemu_print_num, qemu_println,
 };
 use tooling::vga::write_str_at;
-use crate::gamedev::binnary_sprites::get_ovve_outline;
+use crate::gamedev::binary_sprites::get_ovve_outline;
 use crate::gamedev::temp_sprites::get_sprite_ovve_outline;
 
 use crate::graph::font_data;

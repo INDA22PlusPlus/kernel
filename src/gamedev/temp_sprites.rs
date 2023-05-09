@@ -1,4 +1,4 @@
-use crate::gamedev::binnary_sprites::get_ovve_outline;
+use crate::gamedev::binary_sprites::get_ovve_outline;
 use crate::graph::surface::Surface;
 use crate::graph::utils::{ColorCode, u8_buf_to_ColorCode};
 use crate::math::vec2::Vec2;

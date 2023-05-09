@@ -41,7 +41,7 @@ impl Surface {
             buffer: alloc::kalloc(12 * 16) as *mut ColorCode, //Should be fine we have set ColorCode rep to be u8?
         };
 
-        if (_background_color.is_none()) {
+        if _background_color.is_none() {
             new_surface.ignore_color = Some(ColorCode::Black);
         }
 
@@ -55,7 +55,7 @@ impl Surface {
                 let buffer_idx = curr_row * new_surface.width + curr_col;
                 //qemu_fmt_println("{}", format_args!("row: {}, col: {}", curr_row, curr_col));
 
-                if (font_data::FONT_MAPPING[font_map_idx + i] & (128 >> j) > 0) {
+                if font_data::FONT_MAPPING[font_map_idx + i] & (128 >> j) > 0 {
                     unsafe { new_surface.buffer.add(buffer_idx).write(color) }
                 } else {
                     let bg = _background_color.unwrap_or(ColorCode::Black);

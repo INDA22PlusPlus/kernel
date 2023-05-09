@@ -141,7 +141,7 @@ pub fn test_graphics_lib() {
 
     //writer.write_pixel_2(0, 0, ColorCode::Blue);
 
-    let mut A = Surface::from_font('A', font_data::BASIC_FONT, ColorCode::White, None);
+    let mut A = Surface::from_font('A', font_data::BASIC_FONT, ColorCode::Red, Some(ColorCode::White));
     A.set_origin(Vec2::<usize>::new(100, 100));
 
     let mut counter = 0;
@@ -149,9 +149,9 @@ pub fn test_graphics_lib() {
         if (counter % 2 == 0) {
             writer.fill_screen(ColorCode::Blue);
         } else {
-            //writer.fill_screen(ColorCode::Green);
-            writer.write_circle((0, 0), 100, ColorCode::Green);
-            //writer.fill_screen(ColorCode::Gray);
+            // writer.fill_screen(ColorCode::Green);
+            // writer.write_circle((0, 0), 100, ColorCode::Green);
+            // writer.fill_screen(ColorCode::Gray);
         }
 
         writer.write_surface(&A);
@@ -275,13 +275,11 @@ pub fn test_graphics_mode_105_vesa() {
         for i in 0..786432 {
             buffer[i] = 1;
         }
-        /*
         for i in 0..scan_line_cnt {
             for j in 0..scan_line_sz {
                 buffer[i * scan_line_cnt + j] = 1;
             }
         }
-        */
     }
 }
 

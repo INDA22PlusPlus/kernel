@@ -47,6 +47,7 @@ use crate::graph::utils::u8_buf_to_ColorCode;
 
 use crate::handlers::*;
 use crate::math::vec2;
+use crate::mem::alloc::kalloc;
 use crate::utils::qemu_io::qemu_print_nln;
 
 #[no_mangle]
@@ -150,14 +151,56 @@ pub fn test_graphics_lib() {
 
     // let mut sprite = Surface::from_blank(16, 16);
 
-    let mut buf_u8:[u8; 256] = gamedev::temp_sprites::get_ovve_outline();
+    let size = Vec2::<usize>::new(16, 16);
+    let mut scale: usize = 2;
 
-    let mut buf = u8_buf_to_ColorCode(buf_u8.as_mut_ptr());
+    let mut buf_u8: [u8; 256] = gamedev::temp_sprites::get_ovve_outline();
+    // let mut buf = u8_buf_to_ColorCode(buf_u8.as_mut_ptr(), &size, scale);
 
-    let mut sprite = Surface::from_buffer(buf.as_mut_ptr(), 16, 16,
-                                          Some(ColorCode::BrightWhite));
-    sprite.set_origin(Vec2::<usize>::new(100, 100));
-    // sprite.buffer;
+    ///
+    let mut scale: usize = 1;
+    let mut buf = u8_buf_to_ColorCode(buf_u8.as_mut_ptr(), &size, scale);
+
+    let mut sprite_1x = Surface::from_buffer(buf,
+                                             size.y * scale,
+                                             size.x * scale,
+                                             Some(ColorCode::BrightWhite));
+    sprite_1x.set_origin(Vec2::<usize>::new(100, 100));
+
+    ///
+    let mut scale: usize = 2;
+
+    let mut buf = u8_buf_to_ColorCode(buf_u8.as_mut_ptr(), &size, scale);
+
+    let mut sprite_2x = Surface::from_buffer(buf,
+                                             size.y * scale,
+                                             size.x * scale,
+                                             Some(ColorCode::BrightWhite));
+    sprite_2x.set_origin(Vec2::<usize>::new(100, 120));
+
+    ///
+    let mut scale: usize = 3;
+
+    let mut buf = u8_buf_to_ColorCode(buf_u8.as_mut_ptr(), &size, scale);
+
+    let mut sprite_3x = Surface::from_buffer(buf,
+                                             size.y * scale,
+                                             size.x * scale,
+                                             Some(ColorCode::BrightWhite));
+    sprite_3x.set_origin(Vec2::<usize>::new(100, 155));
+
+    ///
+    let mut scale: usize = 4;
+
+    let mut buf = u8_buf_to_ColorCode(buf_u8.as_mut_ptr(), &size, scale);
+
+    let mut sprite_4x = Surface::from_buffer(buf,
+                                             size.y * scale,
+                                             size.x * scale,
+                                             Some(ColorCode::BrightWhite));
+    sprite_4x.set_origin(Vec2::<usize>::new(100, 200));
+
+    ///
 
     let mut counter = 0;
     loop {
@@ -167,7 +210,10 @@ pub fn test_graphics_lib() {
             //writer.fill_screen(ColorCode::Green);
             // writer.write_circle((0, 0), 100, ColorCode::Green);
             //writer.fill_screen(ColorCode::Gray);
-            writer.write_surface(&sprite);
+            writer.write_surface(&sprite_1x);
+            writer.write_surface(&sprite_2x);
+            writer.write_surface(&sprite_3x);
+            writer.write_surface(&sprite_4x);
         }
 
         // font_writer.write_and_retrace(&mut writer, "+++++++++++++++", ColorCode::Green);

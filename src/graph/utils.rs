@@ -1,6 +1,8 @@
 use crate::tooling::qemu_io::*;
 use crate::tooling::serial::*;
 use core::ptr;
+use crate::math::vec2::Vec2;
+use crate::mem::alloc::kalloc;
 use crate::utils::qemu_io::qemu_print_nln;
 
 //Enum corresponding to the default color palette
@@ -47,7 +49,7 @@ pub enum ColorCode {
 // }
 
 impl ColorCode {
-    fn from_u8(num: u8) -> ColorCode {
+    pub(crate) fn from_u8(num: u8) -> ColorCode {
         qemu_print_num(num as u64);
         qemu_print_nln();
         match num {
@@ -79,29 +81,51 @@ impl ColorCode {
 }
 
 // // TODO: Make it independent of constant size, kalloc
-pub fn u8_buf_to_ColorCode(p: *mut u8) -> [ColorCode; 256] {
-    let mut buf: [ColorCode; 256] = [ColorCode::Black; 256];
-    let (_width, _height) = (16, 16);
+pub fn u8_buf_to_ColorCode(p: *mut u8, size: &Vec2<usize>, scale: usize) -> *mut ColorCode {
+    let mut buf_ptr = kalloc((size.x * scale) * (size.y * scale)) as *mut ColorCode;
+    // let mut buf: [ColorCode; 256] = [ColorCode::Black; 256];
+    // let (width, height) = (size.x * scale, size.y * scale);
 
-    for y in 0.._height {
-        for x in 0.._width {
-            qemu_print("xy: ");
-            qemu_print_num((_height * y + x) as u64);
-            qemu_print_nln();
+    for y in 0..size.y {
+        for x in 0..size.x {
+            for scale_y in 0..scale {
+                for scale_x in 0..scale {
 
-            buf[_height * y + x] = ColorCode::from_u8(unsafe { *p.offset((_height * y + x) as isize) });
+                    let pix: usize = scale * (size.y * (scale * y + scale_y) + (x)) + scale_x;
+
+                    qemu_print("Y: ");
+                    qemu_print_num(y as u64);
+                    qemu_print(" X: ");
+                    qemu_print_num(x as u64);
+                    qemu_print(" SY: ");
+                    qemu_print_num(scale_x as u64);
+                    qemu_print(" SX: ");
+                    qemu_print_num(scale_y as u64);
+                    qemu_print(" Pix: ");
+                    qemu_print_num(pix as u64);
+                    qemu_print_nln();
+
+                    unsafe {
+                        buf_ptr
+                            .add(pix)
+                            .write(ColorCode::from_u8(
+                                unsafe { *p.offset( (size.y * y + x) as isize) }
+                            ));
+                    }
+                }
+            }
         }
     }
 
-    qemu_println("Testing colors:");
-    qemu_print_num(buf[0] as u64);
-    qemu_print_nln();
-    qemu_print_num(buf[1] as u64);
-    qemu_print_nln();
-    qemu_print_num(buf[255] as u64);
-    qemu_print_nln();
+    // qemu_println("Testing colors:");
+    // qemu_print_num(buf[0] as u64);
+    // qemu_print_nln();
+    // qemu_print_num(buf[1] as u64);
+    // qemu_print_nln();
+    // qemu_print_num(buf[255] as u64);
+    // qemu_print_nln();
 
-    buf
+    buf_ptr
 }
 
 //This is the default VGA color palette

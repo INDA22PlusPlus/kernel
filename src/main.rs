@@ -57,15 +57,22 @@ pub extern "C" fn _start() -> ! {
     memory::init();
     pic::init();
 
-    test_graphics_lib();
+    // test_graphics_lib();
 
     let buf: [u8; 10] = [0x10u8; 10];
 
     let mut ide_processor: IDE = Default::default();
     ide_processor.init();
-    let mut fs_processor = fat32::FAT32::new(&mut ide_processor).unwrap();
+    let mut result = fat32::FAT32::new(&mut ide_processor);
+    if result.is_err() {
+        qemu_println("Error")
+    } else {
+        qemu_println("FS Started!")
+    }
+    let mut fs_processor = result.unwrap();
 
-    /*
+    // test_graphics_lib();
+
     let mut buf: [u8; 64] = [0x00u8; 64];
     fs_processor.read_file("KEK/ABA/LOL3.TXT", &mut buf, 420);
     fs_processor.delete_directory("KEK/ABA").unwrap();
@@ -95,7 +102,6 @@ pub extern "C" fn _start() -> ! {
 
     //qemu_print_hex(a);
 
-    */
 
     // unsafe {
     //     asm!(

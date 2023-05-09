@@ -27,6 +27,8 @@ use drivers::pci::pci_device_search_by_class_subclass;
 use graph::surface::Surface;
 use graph::utils::{ColorCode, CustomColor};
 pub mod fat32;
+mod gamedev;
+
 use heapless::String;
 use math::vec2::Vec2;
 use mem::memory::{self, *};

@@ -1,6 +1,7 @@
 use crate::graph::surface::*;
 use crate::graph::utils::*;
 use crate::math::vec2::*;
+use crate::mem::alloc::kalloc;
 use crate::tooling::qemu_io::*;
 use crate::tooling::serial::inb;
 use crate::tooling::serial::outb;
@@ -28,6 +29,8 @@ https://qbmikehawk.neocities.org/articles/palette/
 pub struct VgaPlanarWriter {
     video_buffer: &'static mut [u8],
     plane_buffer: [u8; VgaPlanarWriter::PLANE_BUFF_SZ],
+    //plane_buffer: &'static mut [u8],
+    //plane_buffer: *mut ColorCode,
     pub palette: ColorPalette,
 }
 
@@ -36,12 +39,15 @@ impl VgaPlanarWriter {
     const BIT_MAPPING: [u8; 8] = [0x80, 0x40, 0x20, 0x10, 0x8, 0x4, 0x2, 0x1];
 
     //Resolution stuff
-    const SCAN_LN_SZ: usize = 80;
-    const SCAN_LN_CNT: usize = 480;
-    const COL_CNT: usize = 640;
+    pub const SCAN_LN_SZ: usize = 80;
+    pub const SCAN_LN_CNT: usize = 480;
+    pub const COL_CNT: usize = 640;
 
     //Video memory adress
     const VIDEO_MEM_BASE: *mut u8 = 0xA0000 as *mut u8;
+
+    //Alternative plane buffer memory adress
+    const PLANE_BUFF_BASE: *mut u8 = 0x1e8480 as *mut u8;
 
     //The size of one bitplane(plane)
     const PLANE_SZ: usize = VgaPlanarWriter::SCAN_LN_CNT * VgaPlanarWriter::SCAN_LN_SZ;
@@ -59,8 +65,19 @@ impl VgaPlanarWriter {
                     VgaPlanarWriter::VIDEO_MEM_BASE,
                     VgaPlanarWriter::VIDEO_MEM_SZ,
                 ),
-
+                /*
+                plane_buffer: core::slice::from_raw_parts_mut(
+                    VgaPlanarWriter::PLANE_BUFF_BASE,
+                    VgaPlanarWriter::PLANE_BUFF_SZ,
+                ),
+                */
                 plane_buffer: [0; VgaPlanarWriter::PLANE_BUFF_SZ],
+                /*
+                plane_buffer: core::slice::from_raw_parts_mut(
+                    p as *mut u8,
+                    VgaPlanarWriter::PLANE_BUFF_SZ,
+                ),
+                */
                 palette: ColorPalette::new(),
             }
         };
@@ -179,6 +196,7 @@ impl VgaPlanarWriter {
         }
     }
 
+    //The surface origin depicts the upper left corner of the image
     pub fn write_surface(&mut self, surface: &Surface) {
         let surface_offset = surface.get_origin();
         let should_ignore = surface.get_ignore_color();

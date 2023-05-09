@@ -24,11 +24,10 @@ use core::fmt::Write;
 use bord::*;
 use drivers::ide::IDE;
 use drivers::pci::pci_device_search_by_class_subclass;
+use graph::font_writer::FontWriter;
 use graph::surface::Surface;
 use graph::utils::{ColorCode, CustomColor};
 pub mod fat32;
-mod gamedev;
-
 use heapless::String;
 use math::vec2::Vec2;
 use mem::memory::{self, *};
@@ -42,9 +41,11 @@ use crate::graph::font_writer;
 use crate::graph::graphics;
 use crate::graph::planar_writer;
 use crate::graph::surface;
+use crate::graph::utils::u8_buf_to_ColorCode;
 
 use crate::handlers::*;
 use crate::math::vec2;
+use crate::utils::qemu_io::qemu_print_nln;
 
 #[no_mangle]
 #[link_section = ".start"]
@@ -57,51 +58,40 @@ pub extern "C" fn _start() -> ! {
     memory::init();
     pic::init();
 
-    // test_graphics_lib();
-
     let buf: [u8; 10] = [0x10u8; 10];
 
     let mut ide_processor: IDE = Default::default();
     ide_processor.init();
-    let mut result = fat32::FAT32::new(&mut ide_processor);
-    if result.is_err() {
-        qemu_println("Error")
-    } else {
-        qemu_println("FS Started!")
-    }
-    let mut fs_processor = result.unwrap();
+    // let mut fs_processor = fat32::FAT32::new(&mut ide_processor).unwrap();
 
-    // test_graphics_lib();
-
-    let mut buf: [u8; 64] = [0x00u8; 64];
-    fs_processor.read_file("KEK/ABA/LOL3.TXT", &mut buf, 420);
-    fs_processor.delete_directory("KEK/ABA").unwrap();
-    fs_processor.create_file("KEK", "A.TXT").unwrap();
-    fs_processor.create_directory("", "UUU").unwrap();
-    fs_processor.create_directory("UUU", "OOO").unwrap();
-    fs_processor.create_file("UUU", "B.TXT").unwrap();
-    fs_processor.create_file("UUU", "AAA.TXT").unwrap();
-    fs_processor.create_file("UUU/OOO", "CD.TXT").unwrap();
-    fs_processor.create_file("KEK", "B0.TXT").unwrap();
-    let str1: &str = "append from fs wow!";
-    fs_processor
-        .write_file("KEK/A.TXT", str1.as_bytes(), str1.len())
-        .unwrap();
-    let str2: &str = " [please hope this appends]";
-    fs_processor
-        .write_file("LOL.TXT", str2.as_bytes(), str2.len())
-        .unwrap();
-    fs_processor.create_file("UUU/OOO", "LOL.TXT").unwrap();
-
-    fs_processor
-        .write_file("UUU/OOO/LOL.TXT", str2.as_bytes(), str2.len())
-        .unwrap();
-
-    /* From reading a file */
-    qemu_println(unsafe { core::str::from_utf8_unchecked(&buf) });
-
+    // let mut buf: [u8; 64] = [0x00u8; 64];
+    // //fs_processor.read_file("KEK/ABA/LOL3.TXT", &mut buf, 420);
+    // //fs_processor.delete_directory("KEK/ABA").unwrap();
+    // fs_processor.create_file("KEK", "A.TXT").unwrap();
+    // fs_processor.create_directory("", "UUU").unwrap();
+    // fs_processor.create_directory("UUU", "OOO").unwrap();
+    // fs_processor.create_file("UUU", "B.TXT").unwrap();
+    // fs_processor.create_file("UUU", "AAA.TXT").unwrap();
+    // fs_processor.create_file("UUU/OOO", "CD.TXT").unwrap();
+    // fs_processor.create_file("KEK", "B0.TXT").unwrap();
+    // let str1: &str = "append from fs wow!";
+    // fs_processor
+    //     .write_file("KEK/A.TXT", str1.as_bytes(), str1.len())
+    //     .unwrap();
+    // let str2: &str = " [please hope this appends]";
+    // fs_processor
+    //     .write_file("LOL.TXT", str2.as_bytes(), str2.len())
+    //     .unwrap();
+    // fs_processor.create_file("UUU/OOO", "LOL.TXT").unwrap();
+    //
+    // fs_processor
+    //     .write_file("UUU/OOO/LOL.TXT", str2.as_bytes(), str2.len())
+    //     .unwrap();
+    //
+    // /* From reading a file */
+    // qemu_println(unsafe { core::str::from_utf8_unchecked(&buf) });
+    test_graphics_lib();
     //qemu_print_hex(a);
-
 
     // unsafe {
     //     asm!(
@@ -147,26 +137,62 @@ pub fn test_graphics_lib() {
     qemu_println("Test!");
     let mut writer = planar_writer::VgaPlanarWriter::new();
 
-    //writer.write_pixel_2(0, 0, ColorCode::Blue);
+    let mut font_writer = FontWriter::new(font_data::BASIC_FONT);
+    font_writer.load_text_color(ColorCode::Green, Some(ColorCode::Black));
+    font_writer.set_cursor_pos(Vec2::<usize>::new(200, 200));
+    font_writer.set_box_size(Vec2::<usize>::new(50, 100));
+    //font_writer.load_text_color(ColorCode::Green, None);
 
-    let mut A = Surface::from_font('A', font_data::BASIC_FONT, ColorCode::Red, Some(ColorCode::White));
-    A.set_origin(Vec2::<usize>::new(100, 100));
+    //let mut A = Surface::from_font('A', font_data::BASIC_FONT, ColorCode::White, None);
+    //A.set_origin(Vec2::<usize>::new(100, 100));
+
+    // let mut sprite = Surface::from_blank(16, 16);
+
+    let mut buf_u8:[u8; 256] = [
+        15, 15, 15, 15, 15, 15, 15,  0,  0,  0, 15, 15, 15, 15, 15, 15,
+        15, 15, 15, 15, 15,  0,  0, 15, 15, 15,  0,  0, 15, 15, 15, 15,
+        15, 15, 15, 15,  0, 15, 15, 15, 15, 15, 15, 15,  0, 15, 15, 15,
+        15, 15, 15, 15,  0, 15, 15, 15, 15, 15, 15, 15,  0, 15, 15, 15,
+        15, 15, 15, 15,  0, 15, 15, 15, 15, 15, 15, 15,  0, 15, 15, 15,
+        15, 15, 15,  0, 15, 15, 15, 15, 15, 15, 15, 15, 15,  0, 15, 15,
+        15, 15, 15, 15,  0, 15, 15, 15, 15, 15, 15, 15,  0, 15, 15, 15,
+        15, 15, 15, 15,  0,  0, 15, 15, 15, 15, 15,  0,  0, 15, 15, 15,
+        15, 15, 15,  0, 15, 15,  0,  0,  0,  0,  0, 15, 15,  0, 15, 15,
+        15, 15,  0, 15, 15, 15, 15,  0, 15,  0, 15, 15, 15, 15,  0, 15,
+        15, 15,  0, 15, 15,  0, 15, 15, 15, 15, 15,  0, 15, 15,  0, 15,
+        15, 15,  0, 15, 15,  0,  0, 15,  0, 15,  0,  0, 15, 15,  0, 15,
+        15, 15, 15,  0,  0, 15, 15, 15, 15, 15, 15, 15,  0,  0, 15, 15,
+        15, 15, 15,  0, 15,  0, 15, 15,  0, 15, 15,  0, 15,  0, 15, 15,
+        15, 15, 15, 15,  0,  0, 15, 15,  0, 15, 15,  0,  0, 15, 15, 15,
+        15, 15, 15, 15, 15, 15,  0,  0, 15,  0,  0, 15, 15, 15, 15, 15,
+    ];
+
+    let mut buf = u8_buf_to_ColorCode(buf_u8.as_mut_ptr());
+
+    let mut sprite = Surface::from_buffer(buf.as_mut_ptr(), 16, 16,
+                                          Some(ColorCode::BrightWhite));
+    sprite.set_origin(Vec2::<usize>::new(100, 100));
+    // sprite.buffer;
 
     let mut counter = 0;
     loop {
         if (counter % 2 == 0) {
             writer.fill_screen(ColorCode::Blue);
         } else {
-            // writer.fill_screen(ColorCode::Green);
+            //writer.fill_screen(ColorCode::Green);
             // writer.write_circle((0, 0), 100, ColorCode::Green);
-            // writer.fill_screen(ColorCode::Gray);
+            //writer.fill_screen(ColorCode::Gray);
+            writer.write_surface(&sprite);
         }
 
-        writer.write_surface(&A);
+        // font_writer.write_and_retrace(&mut writer, "+++++++++++++++", ColorCode::Green);
+
+        let cursor_pos = font_writer.get_cursor_pos();
+        cursor_pos.print();
 
         writer.present(counter);
         counter += 1;
-        //wait(100000000);
+        wait(100000000);
     }
 
     //writer.color_test();
@@ -283,11 +309,13 @@ pub fn test_graphics_mode_105_vesa() {
         for i in 0..786432 {
             buffer[i] = 1;
         }
+        /*
         for i in 0..scan_line_cnt {
             for j in 0..scan_line_sz {
                 buffer[i * scan_line_cnt + j] = 1;
             }
         }
+        */
     }
 }
 

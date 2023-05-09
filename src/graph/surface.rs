@@ -1,3 +1,5 @@
+use core::ptr::null_mut;
+
 use super::font_data::{self, FontData};
 use super::utils::ColorCode;
 use crate::graph::utils;
@@ -10,6 +12,8 @@ Currently the surface size is fixed, this might have to change ones
 we get heap allocation.
 */
 
+//Shallow copies will obviously be created
+#[derive(Copy, Clone)]
 pub struct Surface {
     width: usize,
     height: usize,
@@ -20,6 +24,15 @@ pub struct Surface {
 
     buffer: *mut ColorCode,
 }
+
+pub const PLACE_HOLDER_SURFACE: Surface = Surface {
+    width: 0,
+    height: 0,
+    origin: Vec2::<usize> { x: 0, y: 0 },
+    background_color: None,
+    ignore_color: None,
+    buffer: null_mut(),
+};
 
 impl Surface {
     //If a background color is not given, the font will be given transparent background
@@ -46,7 +59,6 @@ impl Surface {
         }
 
         let font_map_idx = font_data::get_font_entry(c);
-
         //Iterating over every bit in 24 bytes
         for i in 0..24 {
             for j in 0..8 {
@@ -81,6 +93,23 @@ impl Surface {
             buffer: p,
         };
     }
+
+    // pub fn from_buffer_u8_16x16(
+    //     p: *mut u8,
+    //     _height: usize,
+    //     _width: usize,
+    //     _ignore_color: Option<ColorCode>,
+    // ) -> Surface {
+    //     let mut buf: [ColorCode; 256] = ColorCode::;
+    //
+    //     for y in _height {
+    //         for x in _width {
+    //             buf[_height * y + _width] = u8_to_ColorCode(unsafe { p.offset(_height * y + _width) });
+    //         }
+    //     }
+    //
+    //     return Surface::from_buffer(buf.as_mut_ptr(), _height, _width, _ignore_color);
+    // }
 
     //Create a blank
     pub fn from_blank(_width: usize, _height: usize) -> Surface {

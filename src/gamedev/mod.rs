@@ -6,3 +6,7 @@ mod scene;
 mod player;
 mod camera;
 mod sprite;
+mod tilemap;
+mod entity;
+mod dialogue;
+mod path;

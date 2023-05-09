@@ -1,3 +1,6 @@
+use crate::gamedev::entity::Entity;
+use crate::gamedev::tilemap::TileMap;
+
 pub enum Scene {
     D1(WalkingArea),                // Most likely not going to be used
     Outside(Outside),
@@ -16,6 +19,11 @@ pub enum Outside {
 pub enum Meta {
     MainArea(WalkingArea),
     CounterArea(FightingArea)
+}
+
+pub struct Area {
+    bg: TileMap,
+    entities: [Entity]
 }
 
 pub struct WalkingArea {}

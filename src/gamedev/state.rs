@@ -5,6 +5,7 @@ pub enum State {
     Inventory,              // Less priority
     Pokemon,
     Menu(MenuOptions),
+    GameOver,
     // Settings(Settings)             // Dependent on how menu will be realized
 
     Test,                   // Debug states

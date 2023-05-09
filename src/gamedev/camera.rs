@@ -5,6 +5,10 @@ pub enum CameraType {
     // Scrolling,                       // Most likely not going to be used
 }
 
+trait UpdateCamera {
+
+}
+
 pub struct CameraStationary {}
 
 pub struct CameraFollowing {}

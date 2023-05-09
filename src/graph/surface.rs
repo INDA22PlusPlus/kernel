@@ -3,6 +3,7 @@ use core::ptr::null_mut;
 use super::font_data::{self, FontData};
 use super::utils::ColorCode;
 use crate::graph::utils;
+use crate::graph::utils::u8_to_ColorCode;
 use crate::math::vec2::{self, Vec2};
 use crate::mem::alloc;
 use crate::tooling::qemu_io::*;
@@ -93,6 +94,23 @@ impl Surface {
             buffer: p,
         };
     }
+
+    // pub fn from_buffer_u8_16x16(
+    //     p: *mut u8,
+    //     _height: usize,
+    //     _width: usize,
+    //     _ignore_color: Option<ColorCode>,
+    // ) -> Surface {
+    //     let mut buf: [ColorCode; 256] = ColorCode::;
+    //
+    //     for y in _height {
+    //         for x in _width {
+    //             buf[_height * y + _width] = u8_to_ColorCode(unsafe { p.offset(_height * y + _width) });
+    //         }
+    //     }
+    //
+    //     return Surface::from_buffer(buf.as_mut_ptr(), _height, _width, _ignore_color);
+    // }
 
     //Create a blank
     pub fn from_blank(_width: usize, _height: usize) -> Surface {

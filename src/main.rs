@@ -41,6 +41,7 @@ use crate::graph::font_writer;
 use crate::graph::graphics;
 use crate::graph::planar_writer;
 use crate::graph::surface;
+use crate::graph::utils::u8_buf_to_ColorCode;
 
 use crate::handlers::*;
 use crate::math::vec2;
@@ -60,34 +61,34 @@ pub extern "C" fn _start() -> ! {
 
     let mut ide_processor: IDE = Default::default();
     ide_processor.init();
-    let mut fs_processor = fat32::FAT32::new(&mut ide_processor).unwrap();
+    // let mut fs_processor = fat32::FAT32::new(&mut ide_processor).unwrap();
 
-    let mut buf: [u8; 64] = [0x00u8; 64];
-    //fs_processor.read_file("KEK/ABA/LOL3.TXT", &mut buf, 420);
-    //fs_processor.delete_directory("KEK/ABA").unwrap();
-    fs_processor.create_file("KEK", "A.TXT").unwrap();
-    fs_processor.create_directory("", "UUU").unwrap();
-    fs_processor.create_directory("UUU", "OOO").unwrap();
-    fs_processor.create_file("UUU", "B.TXT").unwrap();
-    fs_processor.create_file("UUU", "AAA.TXT").unwrap();
-    fs_processor.create_file("UUU/OOO", "CD.TXT").unwrap();
-    fs_processor.create_file("KEK", "B0.TXT").unwrap();
-    let str1: &str = "append from fs wow!";
-    fs_processor
-        .write_file("KEK/A.TXT", str1.as_bytes(), str1.len())
-        .unwrap();
-    let str2: &str = " [please hope this appends]";
-    fs_processor
-        .write_file("LOL.TXT", str2.as_bytes(), str2.len())
-        .unwrap();
-    fs_processor.create_file("UUU/OOO", "LOL.TXT").unwrap();
-
-    fs_processor
-        .write_file("UUU/OOO/LOL.TXT", str2.as_bytes(), str2.len())
-        .unwrap();
-
-    /* From reading a file */
-    qemu_println(unsafe { core::str::from_utf8_unchecked(&buf) });
+    // let mut buf: [u8; 64] = [0x00u8; 64];
+    // //fs_processor.read_file("KEK/ABA/LOL3.TXT", &mut buf, 420);
+    // //fs_processor.delete_directory("KEK/ABA").unwrap();
+    // fs_processor.create_file("KEK", "A.TXT").unwrap();
+    // fs_processor.create_directory("", "UUU").unwrap();
+    // fs_processor.create_directory("UUU", "OOO").unwrap();
+    // fs_processor.create_file("UUU", "B.TXT").unwrap();
+    // fs_processor.create_file("UUU", "AAA.TXT").unwrap();
+    // fs_processor.create_file("UUU/OOO", "CD.TXT").unwrap();
+    // fs_processor.create_file("KEK", "B0.TXT").unwrap();
+    // let str1: &str = "append from fs wow!";
+    // fs_processor
+    //     .write_file("KEK/A.TXT", str1.as_bytes(), str1.len())
+    //     .unwrap();
+    // let str2: &str = " [please hope this appends]";
+    // fs_processor
+    //     .write_file("LOL.TXT", str2.as_bytes(), str2.len())
+    //     .unwrap();
+    // fs_processor.create_file("UUU/OOO", "LOL.TXT").unwrap();
+    //
+    // fs_processor
+    //     .write_file("UUU/OOO/LOL.TXT", str2.as_bytes(), str2.len())
+    //     .unwrap();
+    //
+    // /* From reading a file */
+    // qemu_println(unsafe { core::str::from_utf8_unchecked(&buf) });
     test_graphics_lib();
     //qemu_print_hex(a);
 
@@ -144,17 +145,46 @@ pub fn test_graphics_lib() {
     //let mut A = Surface::from_font('A', font_data::BASIC_FONT, ColorCode::White, None);
     //A.set_origin(Vec2::<usize>::new(100, 100));
 
+    // let mut sprite = Surface::from_blank(16, 16);
+
+    let mut buf_u8:[u8; 256] = [
+        15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15,
+        15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15,
+        15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15,
+        15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15,
+        15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15,
+        15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15,
+        15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15,
+        15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15,
+        15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15,
+        15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15,
+        15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15,
+        15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15,
+        15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15,
+        15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15,
+        15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15,
+        15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15,
+    ];
+
+    let mut buf = u8_buf_to_ColorCode(buf_u8[0] as *mut u8);
+
+    let mut sprite = Surface::from_buffer(buf, 16, 16,
+                                          Some(ColorCode::BrightWhite));
+    sprite.set_origin(Vec2::<usize>::new(100, 100));
+    // sprite.buffer;
+
     let mut counter = 0;
     loop {
         if (counter % 2 == 0) {
             writer.fill_screen(ColorCode::Blue);
         } else {
             //writer.fill_screen(ColorCode::Green);
-            writer.write_circle((0, 0), 100, ColorCode::Green);
+            // writer.write_circle((0, 0), 100, ColorCode::Green);
             //writer.fill_screen(ColorCode::Gray);
+            writer.write_surface(&sprite);
         }
 
-        font_writer.write_and_retrace(&mut writer, "+++++++++++++++", ColorCode::Green);
+        // font_writer.write_and_retrace(&mut writer, "+++++++++++++++", ColorCode::Green);
 
         let cursor_pos = font_writer.get_cursor_pos();
         cursor_pos.print();

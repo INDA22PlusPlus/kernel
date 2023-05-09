@@ -1,6 +1,8 @@
 use crate::tooling::qemu_io::*;
 use crate::tooling::serial::*;
 use core::ptr;
+use crate::utils::qemu_io::qemu_print_nln;
+
 //Enum corresponding to the default color palette
 #[derive(PartialEq, Eq, Clone, Copy)]
 #[repr(u8)]
@@ -21,6 +23,71 @@ pub enum ColorCode {
     BrightMagenta = 0xd,
     Yellow = 0xe,
     BrightWhite = 0xf,
+}
+
+// pub fn ColorCode_to_u8(color: ColorCode) -> u8 {
+//     match color {
+//         ColorCode::Black => 0x0,
+//         ColorCode::Blue => 0x1,
+//         ColorCode::Green_ => 0x2,
+//         ColorCode::Cyan => 0x3,
+//         ColorCode::Red_=> 0x4,
+//         ColorCode::Magenta => 0x5,
+//         ColorCode::Brown_=> 0x6,
+//         ColorCode::White => 0x7,
+//         ColorCode::Gray_=> 0x8,
+//         ColorCode::BrightBlue => 0x9,
+//         ColorCode::BrightGreen_=> 0xa,
+//         ColorCode::BrightCyan => 0xb,
+//         ColorCode::BrightRed_=> 0xc,
+//         ColorCode::BrightMagenta => 0xd,
+//         ColorCode::Yellow_=> 0xe,
+//         ColorCode::BrightWhite => 0xf,
+//     }
+// }
+
+pub fn u8_to_ColorCode(num: u8) -> ColorCode {
+    qemu_print_num(num as u64);
+    qemu_print_nln();
+    match num {
+        0x0 => ColorCode::Black,
+        0x1 => ColorCode::Blue,
+        0x2 => ColorCode::Green,
+        0x3 => ColorCode::Cyan,
+        0x4 => ColorCode::Red,
+        0x5 => ColorCode::Magenta,
+        0x6 => ColorCode::Brown,
+        0x7 => ColorCode::White,
+        0x8 => ColorCode::Gray,
+        0x9 => ColorCode::BrightBlue,
+        0xa => ColorCode::BrightGreen,
+        0xb => ColorCode::BrightCyan,
+        0xc => ColorCode::BrightRed,
+        0xd => ColorCode::BrightMagenta,
+        0xe => ColorCode::Yellow,
+        0xf => ColorCode::BrightWhite,
+        // TODO: Fix with panic
+        _ => {
+            qemu_print("Wrong Color: ");
+            qemu_print_num(num as u64);
+            qemu_print_nln();
+            ColorCode::BrightWhite
+        }
+    }
+}
+
+// // TODO: Make it independent of constant size, kalloc
+pub fn u8_buf_to_ColorCode(p: *mut u8) -> *mut ColorCode {
+    let mut buf: [ColorCode; 256] = [ColorCode::Black; 256];
+    let (_width, _height) = (16, 16);
+
+    for y in 0.._height {
+        for x in 0.._width {
+            buf[_height * y + x] = u8_to_ColorCode(unsafe { *p.offset((_height * y + x) as isize) });
+        }
+    }
+
+    buf.as_mut_ptr()
 }
 
 //This is the default VGA color palette

@@ -1,4 +1,8 @@
-pub fn get_ovve_outline() -> [u8; 256] {
+use crate::mem::alloc::kalloc;
+use crate::tooling::qemu_io::{qemu_print, qemu_print_num};
+use crate::utils::qemu_io::qemu_print_nln;
+
+pub fn get_ovve_outline() -> *mut u8 {
     let mut buf_u8:[u8; 256] = [
         15, 15, 15, 15, 15, 15, 15,  0,  0,  0, 15, 15, 15, 15, 15, 15,
         15, 15, 15, 15, 15,  0,  0, 15, 15, 15,  0,  0, 15, 15, 15, 15,
@@ -17,5 +21,19 @@ pub fn get_ovve_outline() -> [u8; 256] {
         15, 15, 15, 15,  0,  0, 15, 15,  0, 15, 15,  0,  0, 15, 15, 15,
         15, 15, 15, 15, 15, 15,  0,  0, 15,  0,  0, 15, 15, 15, 15, 15,
     ];
-    buf_u8
+
+    let buf_kalloc = kalloc(256);
+    for offset in 0..256 {
+        unsafe {
+            buf_kalloc.add(offset).write(buf_u8[offset])
+        }
+    }
+
+    // let buf = buf_u8.as_mut_ptr();
+
+    qemu_print("test pointer: ");
+    qemu_print_num( unsafe { *buf_kalloc.offset(0) } as u64);
+    qemu_print_nln();
+
+    buf_kalloc
 }

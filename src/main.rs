@@ -37,6 +37,7 @@ use tooling::qemu_io::{
     qemu_fmt_println, qemu_print, qemu_print_hex, qemu_print_num, qemu_println,
 };
 use tooling::vga::write_str_at;
+use crate::gamedev::temp_sprites::get_sprite_ovve_outline;
 
 use crate::graph::font_data;
 use crate::graph::font_writer;
@@ -154,58 +155,10 @@ pub fn test_graphics_lib() {
     let size = Vec2::<usize>::new(16, 16);
     let mut scale: usize = 2;
 
-    let mut buf_u8 = gamedev::binnary_sprites::get_ovve_outline();
-
-    qemu_print("test pointer: ");
-    qemu_print_num( unsafe { *buf_u8.offset(0) } as u64);
-    qemu_print_nln();
-
-    // let mut buf = u8_buf_to_ColorCode(buf_u8.as_mut_ptr(), &size, scale);
-
-    ///
-    let mut scale: usize = 1;
-    let mut buf = u8_buf_to_ColorCode(buf_u8, &size, scale);
-
-    let mut sprite_1x = Surface::from_buffer(buf,
-                                             size.y * scale,
-                                             size.x * scale,
-                                             Some(ColorCode::BrightWhite));
-    sprite_1x.set_origin(Vec2::<usize>::new(100, 100));
-
-    ///
-    let mut scale: usize = 2;
-
-    let mut buf = u8_buf_to_ColorCode(buf_u8, &size, scale);
-
-    let mut sprite_2x = Surface::from_buffer(buf,
-                                             size.y * scale,
-                                             size.x * scale,
-                                             Some(ColorCode::BrightWhite));
-    sprite_2x.set_origin(Vec2::<usize>::new(100, 120));
-
-    ///
-    let mut scale: usize = 3;
-
-    let mut buf = u8_buf_to_ColorCode(buf_u8, &size, scale);
-
-    let mut sprite_3x = Surface::from_buffer(buf,
-                                             size.y * scale,
-                                             size.x * scale,
-                                             Some(ColorCode::BrightWhite));
-    sprite_3x.set_origin(Vec2::<usize>::new(100, 155));
-
-    ///
-    let mut scale: usize = 4;
-
-    let mut buf = u8_buf_to_ColorCode(buf_u8, &size, scale);
-
-    let mut sprite_4x = Surface::from_buffer(buf,
-                                             size.y * scale,
-                                             size.x * scale,
-                                             Some(ColorCode::BrightWhite));
-    sprite_4x.set_origin(Vec2::<usize>::new(100, 200));
-
-    ///
+    let sprite_1x = get_sprite_ovve_outline(size, 1);
+    let sprite_2x = get_sprite_ovve_outline(size, 2);
+    let sprite_3x = get_sprite_ovve_outline(size, 3);
+    let sprite_4x = get_sprite_ovve_outline(size, 4);
 
     let mut counter = 0;
     loop {

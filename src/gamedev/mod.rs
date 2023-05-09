@@ -1,3 +1,3 @@
-mod game;
+pub(crate) mod game;
 pub(crate) mod binnary_sprites;
-mod temp_sprites;
+pub(crate) mod temp_sprites;

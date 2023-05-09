@@ -12,3 +12,4 @@ mod dialogue;
 mod path;
 mod inventory;
 mod team;
+mod fighter;

@@ -7,6 +7,6 @@ pub struct TileMap {
     // amount_of_different_tiles: usize,    // to be used with kalloc to have the right size
 
     // TODO: Test that this solution works
-    tile_sprites: [Sprite],
-    tile_map: [[usize]],
+    // tile_sprites: [Sprite],
+    // tile_map: [[usize]],
 }

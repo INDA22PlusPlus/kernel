@@ -38,7 +38,8 @@ use tooling::qemu_io::{
 };
 use tooling::vga::write_str_at;
 use crate::gamedev::binary_sprites::get_ovve_outline;
-use crate::gamedev::temp_sprites::get_sprite_ovve_outline;
+use crate::gamedev::game::Game;
+use crate::gamedev::temp_sprites::get_sprite_from_texture;
 
 use crate::graph::font_data;
 use crate::graph::font_writer;
@@ -153,60 +154,62 @@ pub fn test_graphics_lib() {
 
     // let mut sprite = Surface::from_blank(16, 16);
 
-    let size = Vec2::<usize>::new(16, 16);
-    let start = Vec2::<usize>::new(100, 100);
+    // let size = Vec2::<usize>::new(16, 16);
+    // let start = Vec2::<usize>::new(100, 100);
     // let scale: usize = 2;
-    let ignore_color = ColorCode::BrightWhite;
-    let buf_u8 = get_ovve_outline();
-
-    let sprite_1x = get_sprite_ovve_outline(
-        buf_u8,
-        &size,
-        &start,
-        1,
-        ignore_color
-    );
-
+    // let ignore_color = ColorCode::BrightWhite;
+    // let buf_u8 = get_ovve_outline();
+    //
+    // let sprite_1x = get_sprite_ovve_outline(
+    //     buf_u8,
+    //     &size,
+    //     &start,
+    //     1,
+    //     ignore_color
+    // );
+    //
+    // // let sprite_4x = get_sprite_ovve_outline(
+    // //     buf_u8,
+    // //     size,
+    // //     Vec2::<usize>::new(200, 100),
+    // //     4,
+    // //     ignore_color
+    // // );
+    //
+    // let sprite_2x = get_sprite_ovve_outline(
+    //     buf_u8,
+    //     &size,
+    //     &(start + Vec2::<usize>::new(20, 0)),
+    //     2,
+    //     ignore_color
+    // );
+    //
+    //
+    // let sprite_3x = get_sprite_ovve_outline(
+    //     buf_u8,
+    //     &size,
+    //     &(start + Vec2::<usize>::new(55, 0)),
+    //     3,
+    //     ignore_color
+    // );
+    //
     // let sprite_4x = get_sprite_ovve_outline(
     //     buf_u8,
-    //     size,
-    //     Vec2::<usize>::new(200, 100),
+    //     &size,
+    //     &(start + Vec2::<usize>::new(100, 0)),
     //     4,
     //     ignore_color
     // );
+    //
+    // let sprite_5 = get_sprite_ovve_outline(
+    //     buf_u8,
+    //     &size,
+    //     &(start + Vec2::<usize>::new(100, 100)),
+    //     3,
+    //     ignore_color
+    // );
 
-    let sprite_2x = get_sprite_ovve_outline(
-        buf_u8,
-        &size,
-        &(start + Vec2::<usize>::new(20, 0)),
-        2,
-        ignore_color
-    );
-
-
-    let sprite_3x = get_sprite_ovve_outline(
-        buf_u8,
-        &size,
-        &(start + Vec2::<usize>::new(55, 0)),
-        3,
-        ignore_color
-    );
-
-    let sprite_4x = get_sprite_ovve_outline(
-        buf_u8,
-        &size,
-        &(start + Vec2::<usize>::new(100, 0)),
-        4,
-        ignore_color
-    );
-
-    let sprite_5 = get_sprite_ovve_outline(
-        buf_u8,
-        &size,
-        &(start + Vec2::<usize>::new(100, 100)),
-        3,
-        ignore_color
-    );
+    let mut game = Game::create_test_game();
 
     let mut counter = 0;
     loop {
@@ -216,11 +219,11 @@ pub fn test_graphics_lib() {
             //writer.fill_screen(ColorCode::Green);
             // writer.write_circle((0, 0), 100, ColorCode::Green);
             //writer.fill_screen(ColorCode::Gray);
-            writer.write_surface(&sprite_1x);
-            writer.write_surface(&sprite_2x);
-            writer.write_surface(&sprite_3x);
-            writer.write_surface(&sprite_4x);
-            writer.write_surface(&sprite_5);
+            // writer.write_surface(&sprite_1x);
+            // writer.write_surface(&sprite_2x);
+            // writer.write_surface(&sprite_3x);
+            // writer.write_surface(&sprite_4x);
+            // writer.write_surface(&sprite_5);
         }
 
         // font_writer.write_and_retrace(&mut writer, "+++++++++++++++", ColorCode::Green);

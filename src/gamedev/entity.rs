@@ -13,10 +13,11 @@ pub enum Entity {
     GymLeader(GymLeader)
 }
 
+// Todo: Fix pub
 pub struct BasicEntity {
-    name: str,
-    sprite: Sprite,
-    pos: Vec2<usize>
+    pub name: &'static str,
+    pub sprite: Sprite,
+    // pos: Vec2<usize>
 }
 
 pub struct NPC {

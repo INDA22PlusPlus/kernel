@@ -161,8 +161,8 @@ pub fn test_graphics_lib() {
 
     let sprite_1x = get_sprite_ovve_outline(
         buf_u8,
-        size,
-        start,
+        &size,
+        &start,
         1,
         ignore_color
     );
@@ -177,8 +177,8 @@ pub fn test_graphics_lib() {
 
     let sprite_2x = get_sprite_ovve_outline(
         buf_u8,
-        size,
-        Vec2::<usize>::new(120, 100),
+        &size,
+        &(start + Vec2::<usize>::new(20, 0)),
         2,
         ignore_color
     );
@@ -186,16 +186,16 @@ pub fn test_graphics_lib() {
 
     let sprite_3x = get_sprite_ovve_outline(
         buf_u8,
-        size,
-        start + Vec2::<usize>::new(55, 0),
+        &size,
+        &(start + Vec2::<usize>::new(55, 0)),
         3,
         ignore_color
     );
 
     let sprite_4x = get_sprite_ovve_outline(
         buf_u8,
-        size,
-        Vec2::<usize>::new(200, 100),
+        &size,
+        &(start + Vec2::<usize>::new(100, 0)),
         4,
         ignore_color
     );

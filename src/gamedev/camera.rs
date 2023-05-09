@@ -1,12 +1,12 @@
-enum CameraType {
-    Stationary,
-    FollowingPlayer,                    // Likely not going to be used
-    FollowingPlayerUntilBorders,        // Most likely to be used
+pub enum CameraType {
+    Stationary(CameraStationary),
+    Following(CameraFollowing),                    // Likely not going to be used
+    FollowingBorders(CameraFollowingBorders),        // Most likely to be used
     // Scrolling,                       // Most likely not going to be used
 }
 
 pub struct CameraStationary {}
 
-pub struct CameraStationary {}
+pub struct CameraFollowing {}
 
-pub struct CameraStationary {}
+pub struct CameraFollowingBorders {}

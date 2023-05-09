@@ -8,3 +8,6 @@ pub struct Sprite {
     scale: usize,
 }
 
+// impl Sprite {
+//     pub fn from_fn(fn)
+// }

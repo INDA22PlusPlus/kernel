@@ -200,6 +200,14 @@ pub fn test_graphics_lib() {
         ignore_color
     );
 
+    let sprite_5x = get_sprite_ovve_outline(
+        buf_u8,
+        &size,
+        &(start + Vec2::<usize>::new(100, 100)),
+        4,
+        ignore_color
+    );
+
     let mut counter = 0;
     loop {
         if (counter % 2 == 0) {
@@ -212,6 +220,7 @@ pub fn test_graphics_lib() {
             writer.write_surface(&sprite_2x);
             writer.write_surface(&sprite_3x);
             writer.write_surface(&sprite_4x);
+            writer.write_surface(&sprite_5x);
         }
 
         // font_writer.write_and_retrace(&mut writer, "+++++++++++++++", ColorCode::Green);

@@ -74,7 +74,7 @@ impl ColorCode {
                 qemu_print("Wrong Color: ");
                 qemu_print_num(num as u64);
                 qemu_print_nln();
-                ColorCode::BrightWhite
+                panic!("Color outside color depth")
             }
         }
     }

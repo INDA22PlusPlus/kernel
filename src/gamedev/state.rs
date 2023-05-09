@@ -1,8 +1,10 @@
+#[derive(PartialEq, Debug)]
 pub enum State {
     Walking,
     Fighting,
     CutScene,
-    Inventory,              // Less priority
+    Inventory,
+    // Less priority
     Pokemon,
     Menu(MenuOptions),
     GameOver,
@@ -11,6 +13,7 @@ pub enum State {
     Test,                   // Debug states
 }
 
+#[derive(PartialEq, Debug)]
 pub enum MenuOptions {
     MainMenu,
     Settings(Settings),
@@ -19,8 +22,11 @@ pub enum MenuOptions {
 
 }
 
+#[derive(PartialEq, Debug)]
 pub struct Settings {}
 
+#[derive(PartialEq, Debug)]
 pub struct Save {}
 
+#[derive(PartialEq, Debug)]
 pub struct Load {}

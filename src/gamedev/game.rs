@@ -63,7 +63,7 @@ impl Game {
 
     pub fn game_loop(&self) {
         while self.state != State::GameOver {
-            self.camera.
+            // self.camera.
         }
     }
 }

@@ -5,7 +5,7 @@ use crate::gamedev::entity::BasicEntity;
 use crate::gamedev::fighter::Fighter;
 use crate::gamedev::player::Player;
 use crate::gamedev::scene::{FightingArea, Scene, WalkingArea};
-use crate::gamedev::sprite::Sprite;
+use crate::gamedev::sprite::{OnScreen, Sprite};
 use crate::gamedev::state::State;
 use crate::gamedev::team::Team;
 use crate::gamedev::temp_sprites::get_sprite_from_texture;
@@ -47,14 +47,15 @@ impl Game {
                 sprite: Sprite::new(
                     ovve_outline_texture,
                     &Vec2::<usize>::new(100, 100),
-                    &Vec2::<usize>::new(16, 16),
                     2,
-                )
+                    OnScreen::OffScreen,
+                ),
+                pos: Vec2::<usize>::new(1000, 1000),
             }, team: Team {
                 fighting_team: [None; 6],
                 collection: [None; 100],
             }},
-            camera: CameraType::Stationary(CameraStationary{}),
+            camera: CameraType::Stationary(CameraStationary::new()),
             // loaded_textures: ,
             writer: planar_writer::VgaPlanarWriter::new(),
             font_writer,
@@ -63,7 +64,15 @@ impl Game {
 
     pub fn game_loop(&self) {
         while self.state != State::GameOver {
-            self.camera.
+            // self.camera.
         }
+    }
+
+    pub fn render(&self) {
+
+    }
+
+    pub fn update(& self) {
+        // self.player.step();
     }
 }

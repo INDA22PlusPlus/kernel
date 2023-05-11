@@ -17,6 +17,7 @@ pub enum Entity {
 pub struct BasicEntity {
     pub name: &'static str,
     pub sprite: Sprite,
+    pub pos: Vec2<usize>            // Logical pos
     // pos: Vec2<usize>
 }
 

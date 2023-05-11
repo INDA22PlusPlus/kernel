@@ -13,13 +13,12 @@ pub enum CameraType {
 }
 
 trait UpdateCamera {
-    fn scroll(&self) {
-
-    }
+    fn scroll(&self) {}
 }
 
+// TODO: Research more about this OOP like structure, better ways to create rust like structs
 pub struct BasicCamera {
-    pos: Vec2<usize>,
+    pos: Vec2<usize>,                   // Upper left corner, because of usize being non-negative
     internal_offset: Vec2<usize>,
     external_offset: Vec2<usize>,
     internal_screen_size: Vec2<usize>,
@@ -67,6 +66,7 @@ impl BasicCamera {
         }
     }
 
+    // TODO: Figure out a way to make the stationary struct have
     pub fn set_pos(&mut self, pos: Vec2<usize>) {
         self.pos = pos;
     }
@@ -86,10 +86,45 @@ impl BasicCamera {
     pub fn set_external_screen_size(&mut self, size: Vec2<usize>) {
         self.external_screen_size = size;
     }
+
+    pub fn add_pos(&mut self, pos: Vec2<usize>) {
+        self.external_offset += pos;
+    }
+
+    pub fn add_offset(&mut self, offset: Vec2<usize>) {
+        self.external_offset += offset;
+    }
 }
 
-pub struct CameraStationary {}
+pub struct CameraStationary {
+    basic_camera: BasicCamera,
+}
 
-pub struct CameraFollowing {}
+impl UpdateCamera for CameraStationary {}
 
-pub struct CameraFollowingBorders {}
+impl CameraStationary {
+    pub fn new() -> Self {
+        CameraStationary {
+            basic_camera: BasicCamera::new()
+        }
+    }
+}
+
+pub struct CameraFollowing {
+    basic_camera: BasicCamera,
+    player: Player,
+}
+
+impl UpdateCamera for CameraFollowing {
+    fn scroll(&self) {
+        // self.basic_camera.pos
+    }
+}
+
+pub struct CameraFollowingBorders {
+    basic_camera: BasicCamera,
+    player: Player,
+
+    // Lower right corner, assuming (0,0) is the starting point in top left (Because of usize)
+    borders: Vec2<usize>
+}

@@ -37,7 +37,7 @@ use tooling::qemu_io::{
     qemu_fmt_println, qemu_print, qemu_print_hex, qemu_print_num, qemu_println,
 };
 use tooling::vga::write_str_at;
-use crate::gamedev::binnary_sprites::get_ovve_outline;
+use crate::gamedev::binnary_sprites::{get_ovve_outline, get_ovve, get_hair, get_skin, get_hoodie};
 use crate::gamedev::temp_sprites::get_sprite_ovve_outline;
 
 use crate::graph::font_data;
@@ -156,76 +156,124 @@ pub fn test_graphics_lib() {
     let size = Vec2::<usize>::new(16, 16);
     let start = Vec2::<usize>::new(100, 100);
     // let scale: usize = 2;
-    let ignore_color = ColorCode::BrightWhite;
-    let buf_u8 = get_ovve_outline();
 
-    let sprite_1x = get_sprite_ovve_outline(
-        buf_u8,
-        &size,
-        &start,
-        1,
-        ignore_color
-    );
-
-    // let sprite_4x = get_sprite_ovve_outline(
-    //     buf_u8,
-    //     size,
-    //     Vec2::<usize>::new(200, 100),
-    //     4,
-    //     ignore_color
-    // );
-
-    let sprite_2x = get_sprite_ovve_outline(
-        buf_u8,
-        &size,
-        &(start + Vec2::<usize>::new(20, 0)),
-        2,
-        ignore_color
-    );
-
-
-    let sprite_3x = get_sprite_ovve_outline(
-        buf_u8,
-        &size,
-        &(start + Vec2::<usize>::new(55, 0)),
-        3,
-        ignore_color
-    );
-
-    let sprite_4x = get_sprite_ovve_outline(
-        buf_u8,
-        &size,
-        &(start + Vec2::<usize>::new(100, 0)),
-        4,
-        ignore_color
-    );
-
-    let mut counter = 0;
-    loop {
-        if (counter % 2 == 0) {
-            writer.fill_screen(ColorCode::Blue);
-        } else {
-            //writer.fill_screen(ColorCode::Green);
-            // writer.write_circle((0, 0), 100, ColorCode::Green);
-            //writer.fill_screen(ColorCode::Gray);
-            writer.write_surface(&sprite_1x);
-            writer.write_surface(&sprite_2x);
-            writer.write_surface(&sprite_3x);
-            writer.write_surface(&sprite_4x);
+    // funciton for recoloring a `*mut u8` to a number i wherever its bytes are not 15
+    fn recolor(a: *mut u8, i: ColorCode) -> *mut u8 {
+        let mut result = a;
+        for j in 0..256 {
+            let byte = unsafe { *result.offset(j as isize) };
+            if byte != 15 {
+                unsafe { *result.offset(j as isize) = (i as u8)};
+            }
         }
-
-        // font_writer.write_and_retrace(&mut writer, "+++++++++++++++", ColorCode::Green);
-
-        let cursor_pos = font_writer.get_cursor_pos();
-        cursor_pos.print();
-
-        writer.present(counter);
-        counter += 1;
-        wait(100000000);
+        result
     }
+
+    // setting colors for the `*mut u8`
+    let ignore_color = ColorCode::BrightWhite;
+    let buf_u8_outline = get_ovve_outline();
+    let buf_u8_ovve = recolor(get_ovve(), ColorCode::BrightGreen);
+    let buf_u8_skin = get_skin();
+    let buf_u8_hair = recolor(get_hair(), ColorCode::Green);
+    let buf_u8_hoodie = recolor(get_hoodie(), ColorCode::White);
+
+    // function for adding two layers, layer b overrides a where b:s bytes are not 15
+    unsafe fn add(a: *mut u8, b: *mut u8) -> *mut u8 {
+        for i in 0..256 {
+            if *b.offset(i as isize) != 15 {
+                *a.offset(i as isize) = *b.offset(i as isize);
+            }
+        }
+        a
+    }
+    unsafe {
+
+        let buf_u8 = add(buf_u8_outline, buf_u8_ovve);
+        let buf_u8 = add(buf_u8, buf_u8_skin);
+        let buf_u8 = add(buf_u8, buf_u8_hair);
+        let buf_u8 = add(buf_u8, buf_u8_hoodie);
+        
+
+
+        let sprite_1x = get_sprite_ovve_outline(
+            buf_u8,
+            &size,
+            &start,
+            1,
+            ignore_color
+        );
+
+        // let sprite_4x = get_sprite_ovve_outline(
+        //     buf_u8,
+        //     size,
+        //     Vec2::<usize>::new(200, 100),
+        //     4,
+        //     ignore_color
+        // );
+
+        let sprite_2x = get_sprite_ovve_outline(
+            buf_u8,
+            &size,
+            &(start + Vec2::<usize>::new(20, 0)),
+            2,
+            ignore_color
+        );
+
+
+        let sprite_3x = get_sprite_ovve_outline(
+            buf_u8,
+            &size,
+            &(start + Vec2::<usize>::new(55, 0)),
+            3,
+            ignore_color
+        );
+
+        let sprite_4x = get_sprite_ovve_outline(
+            buf_u8,
+            &size,
+            &(start + Vec2::<usize>::new(100, 0)),
+            4,
+            ignore_color
+        );
+
+        let sprite_giga = get_sprite_ovve_outline(
+            buf_u8,
+            &size,
+            &(start + Vec2::<usize>::new(100, 0)),
+            20,
+            ignore_color
+        );
+
+
+
+        let mut counter = 0;
+        loop {
+            if (counter % 2 == 0) {
+                writer.fill_screen(ColorCode::Blue);
+            } else {
+                //writer.fill_screen(ColorCode::Green);
+                // writer.write_circle((0, 0), 100, ColorCode::Green);
+                //writer.fill_screen(ColorCode::Gray);
+                // writer.write_surface(&sprite_1x);
+                // writer.write_surface(&sprite_2x);
+                // writer.write_surface(&sprite_3x);
+                // writer.write_surface(&sprite_4x);
+                writer.write_surface(&sprite_giga);
+            }
+
+            // font_writer.write_and_retrace(&mut writer, "+++++++++++++++", ColorCode::Green);
+
+            let cursor_pos = font_writer.get_cursor_pos();
+            cursor_pos.print();
+
+            writer.present(counter);
+            counter += 1;
+            wait(100000000);
+        }
 
     //writer.color_test();
     //writer.print_plane(1);
+    }
 }
 
 pub fn test_graphics_mode_12() {
